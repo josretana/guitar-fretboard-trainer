@@ -2,6 +2,7 @@
   "name": "guitar-fretboard-trainer",
   "version": "1.0.0",
   "private": true,
+  "main": "src/main.jsx",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
