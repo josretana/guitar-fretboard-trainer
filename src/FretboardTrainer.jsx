@@ -1,16 +1,4 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useState } from "react";
 
 const strings = ["E", "A", "D", "G", "B", "e"];
 const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
@@ -65,43 +53,17 @@ function FretboardSVG({ note, current }) {
   const matches = getMatchingPositions(note);
   return (
     <svg viewBox="-2 0 14 6" preserveAspectRatio="none" className="w-full h-48 mt-6 mb-6">
-      {/* Etiquetas de cuerdas */}
       {strings.map((s, idx) => (
-        <text
-          key={`label-${idx}`}
-          x={-1.4}
-          y={5.5 - idx + 0.2}
-          fontSize="0.4"
-          textAnchor="end"
-        >
+        <text key={`label-${idx}`} x={-1.4} y={5.5 - idx + 0.2} fontSize="0.4" textAnchor="end">
           {6 - idx} ({s})
         </text>
       ))}
-      {/* Líneas de cuerdas */}
       {Array.from({ length: 6 }, (_, i) => (
-        <line
-          key={`string-${i}`}
-          x1="0"
-          x2="12"
-          y1={5.5 - i}
-          y2={5.5 - i}
-          stroke="black"
-          strokeWidth="0.05"
-        />
+        <line key={`string-${i}`} x1="0" x2="12" y1={5.5 - i} y2={5.5 - i} stroke="black" strokeWidth="0.05" />
       ))}
-      {/* Líneas de trastes */}
       {Array.from({ length: 13 }, (_, i) => (
-        <line
-          key={`fret-${i}`}
-          x1={i}
-          x2={i}
-          y1="-0.5"
-          y2="5.5"
-          stroke="gray"
-          strokeWidth="0.03"
-        />
+        <line key={`fret-${i}`} x1={i} x2={i} y1="-0.5" y2="5.5" stroke="gray" strokeWidth="0.03" />
       ))}
-      {/* Notas */}
       {matches.map(({ stringIndex, fret }, idx) => (
         <circle
           key={idx}
@@ -160,113 +122,93 @@ export default function FretboardTrainer() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 font-sans space-y-6">
-      <style jsx>{`
-        [data-hover] {
-          transition: background 0.2s ease;
-        }
-        [data-hover]:hover {
-          background-color: rgba(0, 0, 0, 0.05);
-          font-weight: bold;
-        }
-      `}</style>
-      <Card>
-        <CardContent className="space-y-6 p-6">
-          <h2 className="text-2xl font-bold text-center">🎸 Entrenador de Notas en el Mástil</h2>
+      <div className="border p-6 rounded-md">
+        <h2 className="text-2xl font-bold text-center">🎸 Entrenador de Notas en el Mástil</h2>
 
-          <div className="space-y-6">
-            <div>
-              <p className="font-semibold mb-2">Selecciona las cuerdas:</p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                {strings.map((s, idx) => (
-                  <label key={idx} className="flex items-center gap-2">
-                    <Checkbox
-                      checked={selectedStrings.includes(idx)}
-                      onCheckedChange={() => toggleString(idx)}
-                      className="w-5 h-5 border-gray-400"
-                    />
-                    <span className="text-base">Cuerda {6 - idx} ({s})</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <p className="font-semibold">Rango de trastes:</p>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label htmlFor="minFret">Desde:</label>
-                  <Input
-                    id="minFret"
-                    type="number"
-                    value={minFret}
-                    min={1}
-                    max={12}
-                    onChange={(e) => handleFretInput(0, e.target.value)}
-                    className="w-20"
+        <div className="space-y-6">
+          <div>
+            <p className="font-semibold mb-2">Selecciona las cuerdas:</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+              {strings.map((s, idx) => (
+                <label key={idx} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedStrings.includes(idx)}
+                    onChange={() => toggleString(idx)}
+                    className="w-5 h-5 border-gray-400"
                   />
-                </div>
-                <div className="flex items-center gap-2">
-                  <label htmlFor="maxFret">Hasta:</label>
-                  <Input
-                    id="maxFret"
-                    type="number"
-                    value={maxFret}
-                    min={1}
-                    max={12}
-                    onChange={(e) => handleFretInput(1, e.target.value)}
-                    className="w-20"
-                  />
-                </div>
-              </div>
-              <Slider
-                value={fretRange}
-                onValueChange={setFretRange}
-                min={1}
-                max={12}
-                step={1}
-              />
+                  <span className="text-base">Cuerda {6 - idx} ({s})</span>
+                </label>
+              ))}
             </div>
           </div>
 
-          <div className="text-center mt-10 space-y-6">
-            <p className="text-lg">
-              ¿Qué nota hay en la <strong>cuerda {6 - current.stringIndex} ({current.stringName} / {latinNotes[openNotes[current.stringIndex]]})</strong>, traste <strong>{current.fret}</strong>?
-            </p>
-
-            <div className="my-6">
-              <Select value={input} onValueChange={checkAnswer}>
-                <SelectTrigger className="w-40 mx-auto">
-                  <SelectValue placeholder="Selecciona una nota" />
-                </SelectTrigger>
-                <SelectContent className="space-y-1">
-                  {notes.map((note) => (
-                    <SelectItem
-                      key={note}
-                      value={note}
-                      className="py-2 text-base cursor-pointer"
-                      data-hover
-                    >
-                      {note} ({latinNotes[note]})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {feedback && <p className="text-lg font-medium">{feedback}</p>}
-            <p className="text-sm text-muted-foreground">Puntos: {score}</p>
-
-            {answered && (
-              <div className="mt-10 space-y-6">
-                <FretboardSVG note={current.note} current={current} />
-                <div className="text-center">
-                  <Button variant="secondary" onClick={nextQuestion}>Nueva pregunta</Button>
-                </div>
+          <div className="space-y-2">
+            <p className="font-semibold">Rango de trastes:</p>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label htmlFor="minFret">Desde:</label>
+                <input
+                  id="minFret"
+                  type="number"
+                  value={minFret}
+                  min={1}
+                  max={12}
+                  onChange={(e) => handleFretInput(0, e.target.value)}
+                  className="w-20"
+                />
               </div>
-            )}
+              <div className="flex items-center gap-2">
+                <label htmlFor="maxFret">Hasta:</label>
+                <input
+                  id="maxFret"
+                  type="number"
+                  value={maxFret}
+                  min={1}
+                  max={12}
+                  onChange={(e) => handleFretInput(1, e.target.value)}
+                  className="w-20"
+                />
+              </div>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="text-center mt-10 space-y-6">
+          <p className="text-lg">
+            ¿Qué nota hay en la <strong>cuerda {6 - current.stringIndex} ({current.stringName} / {latinNotes[openNotes[current.stringIndex]]})</strong>, traste <strong>{current.fret}</strong>?
+          </p>
+
+          <div className="my-6">
+            <select
+              value={input}
+              onChange={(e) => checkAnswer(e.target.value)}
+              className="w-40 mx-auto block border border-gray-400 rounded-md p-2"
+            >
+              <option value="">Selecciona una nota</option>
+              {notes.map((note) => (
+                <option key={note} value={note}>
+                  {note} ({latinNotes[note]})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {feedback && <p className="text-lg font-medium">{feedback}</p>}
+          <p className="text-sm text-muted-foreground">Puntos: {score}</p>
+
+          {answered && (
+            <div className="mt-10 space-y-6">
+              <FretboardSVG note={current.note} current={current} />
+              <div className="text-center">
+                <button onClick={nextQuestion} className="px-4 py-2 bg-gray-200 rounded-md">
+                  Nueva pregunta
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
