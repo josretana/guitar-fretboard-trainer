@@ -151,12 +151,12 @@ export default function App() {
             ¿Qué nota hay en la <strong>cuerda {6 - current.stringIndex} ({current.stringName} / {latinNotes[openNotes[current.stringIndex]]})</strong>, traste <strong>{current.fret}</strong>?
           </p>
 
+          <FretboardSVG note={current.note} current={current} highlightAllMatches={answered} />
+
           <select value={input} onChange={e => check(e.target.value)} className="block mx-auto mt-4 p-2 border">
             <option value="">Selecciona una nota</option>
             {notes.map(n => <option key={n} value={n}>{n} ({latinNotes[n]})</option>)}
           </select>
-
-          <FretboardSVG note={current.note} current={current} highlightAllMatches={answered} />
 
           {feedback && <p className="text-lg font-semibold text-center">{feedback}</p>}
         </>
